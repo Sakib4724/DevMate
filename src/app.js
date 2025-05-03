@@ -1,18 +1,32 @@
 const express = require("express");
 const app = express();
+const connectDB = require("./config/database");
+const User = require("./models/user");
 
-app.get("/user", (req, res) => {
-    res.send("User data fetched successfully!")
+app.post("/signup", async (req, res) => {
+    //Creating a new instance of the user model
+    const user = new User({
+        firstName: "Sakib",
+        lastName: "Shaikh",
+        emailId: "sakibshaikh2425@gmail.com",
+        password: "saki123"
+    });
+
+    try {
+        await user.save();
+        res.send("User added successfully!")
+    } catch (err) {
+        res.status(400).send("Error saving the user: " + err.message);
+    }
 });
 
-app.post("/user", (req, res) => {
-    res.send("User data saved to the database!")
-});
+connectDB().then(() => {
+    console.log("Database connection established..");
 
-app.delete("/user", (req, res) => {
-    res.send("User data deleted from the database!")
-});
-
-app.listen(3000, () => {
-    console.log("DevMate Server is running on port 3000")
+    app.listen(3000, () => {
+        console.log("DevMate Server is running on port 3000")
+    });
+})
+.catch(err => {
+    console.log("Database cannot be connected!");
 });
