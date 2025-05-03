@@ -4,14 +4,11 @@ require('dotenv').config();
 const connectDB = require("./config/database");
 const User = require("./models/user");
 
+app.use(express.json());
+
 app.post("/signup", async (req, res) => {
     //Creating a new instance of the user model
-    const user = new User({
-        firstName: "Sakib",
-        lastName: "Shaikh",
-        emailId: "sakibshaikh2425@gmail.com",
-        password: "saki123"
-    });
+    const user = new User(req.body);
 
     try {
         await user.save();
@@ -28,6 +25,6 @@ connectDB().then(() => {
         console.log("DevMate Server is running on port 3000")
     });
 })
-.catch(err => {
-    console.log("Database cannot be connected!");
-});
+    .catch(err => {
+        console.log("Database cannot be connected!");
+    });
