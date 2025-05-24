@@ -19,7 +19,19 @@ const connectionRequestSchema = new mongoose.Schema({
             message: `{VALUE} is incorrect status type!`,
         },
     },
-}, {timestamps: true});
+}, { timestamps: true });
+
+connectionRequestSchema.index({ fromUserId: 1, toUserId: 1 });
+
+connectionRequestSchema.pre("save", function (next) {
+    const connectionRequest = this;
+
+    if (connectionRequest.toUserId.equals(connectionRequest.fromUserId)) {
+        throw new Error("Cannot send connection request to yourself!");
+    }
+
+    next();
+});
 
 const ConnectionRequest = mongoose.model("ConnectionRequest", connectionRequestSchema);
 module.exports = ConnectionRequest;
